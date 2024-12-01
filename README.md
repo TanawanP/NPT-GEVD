@@ -1,4 +1,4 @@
-# R Code--------------------------------------------------------------------
+## R Code--------------------------------------------------------------------
 # Title: Analysis of Negative Power Transformation-GEV Distribution (NPT-GEVD) for Estimation of Minimum IAT Data
 # Authors: Prahadchai T., Yoon S., and Busababodhin P.
 # Version 1 (1 Dec 2024)
