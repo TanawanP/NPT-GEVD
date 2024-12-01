@@ -1,4 +1,4 @@
-### Explanations:
+### Explanations: 
 #### Introduction
 To enhance the accuracy of return level (RL) estimation, the Generalized Extreme Value Distribution (GEVD) is commonly applied in maximum value analysis. However, to extend this framework to the analysis of minimum values, a transformation of the data is required, allowing the problem of minimum value estimation to be reformulated as a maximum value problem. The classical approach involves applying a negative sign to the block minima data. Despite its simplicity, this conventional transformation method may produce negative RL estimates in certain cases, which can lead to inaccuracies and challenges in interpretation.
 
