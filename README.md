@@ -1,15 +1,15 @@
 ## R Code--------------------------------------------------------------------
-# Title: Analysis of Negative Power Transformation-GEV Distribution (NPT-GEVD) for Estimation of Minimum IAT Data
-# Authors: Prahadchai T., Yoon S., and Busababodhin P.
-# Version 1 (1 Dec 2024)
-# --------------------------------------------------------------------------
-# Short Description:
-# There are a total of 8steps to obtain the parameter and return level (RL) estimates.
-# Please follow steps 1)–8). Note that steps 3)–7) require setting the directory, providing minimum data, and obtaining the results.
-# Step 8) involves saving the final output in Excel format and storing it in your folder directory.
-# --------------------------------------------------------------------------
+## Title: Analysis of Negative Power Transformation-GEV Distribution (NPT-GEVD) for Estimation of Minimum IAT Data
+## Authors: Prahadchai T., Yoon S., and Busababodhin P.
+## Version 1 (1 Dec 2024)
+## --------------------------------------------------------------------------
+## Short Description:
+## There are a total of 8steps to obtain the parameter and return level (RL) estimates.
+## Please follow steps 1)–8). Note that steps 3)–7) require setting the directory, providing minimum data, and obtaining the results.
+## Step 8) involves saving the final output in Excel format and storing it in your folder directory.
+## --------------------------------------------------------------------------
 
-# 1) Packages ---
+## 1) Packages ---
 library(SpatialExtremes)
 library(ismev)
 library(extRemes)
@@ -20,20 +20,20 @@ library(dplyr)
 library(stringr)
 library(openxlsx)
 
-# 2) Important functions --------
+## 2) Important functions --------
 
-# Calculation function of the RL for CT-GEVD using the MLE method and the standard error (SE) of RL using the delta method.
+### Calculation function of the RL for CT-GEVD using the MLE method and the standard error (SE) of RL using the delta method.
 getReturnLevels_ct <- function(f, rp=c(25,50,100), conf=0.95){
-  # make empty list
+  #### make empty list
   dn <- list(NULL,c('period','2.5% ','Estimate','97.5%','se'))
   rl <- matrix(NA,nrow=length(rp),ncol=5,dimnames=dn)
   rl[,1] <- rp
   
-  # Extract the estimated parameters (location, scale, shape)
+  #### Extract the estimated parameters (location, scale, shape)
   params <- f$mle
   names(params) <- c("location", "scale", "shape")
   
-  # Manually compute the covariance matrix using the Fisher Information
+  ##### Manually compute the covariance matrix using the Fisher Information
   Cov_mat <- f$cov
   if(any(is.na(Cov_mat))){
     resam_x <- sample(f$data, size=(length(f$data)-5), replace = TRUE)
@@ -43,15 +43,15 @@ getReturnLevels_ct <- function(f, rp=c(25,50,100), conf=0.95){
     cov_matrix <- f$cov
   }
   
-  # Define the return period and calculate the return level for the transformed data
+  ##### Define the return period and calculate the return level for the transformed data
   return_level_transformed <- params["location"] - (params["scale"] / params["shape"]) * 
     (1 - (-log(1 - 1/rp))^(-params["shape"]))
   
-  # Transform the return level back to the original scale by multiplying by -1
-  # return_level_minima <- -return_level_transformed
+  ##### Transform the return level back to the original scale by multiplying by -1
+  ##### return_level_minima <- -return_level_transformed
   rl[,3] <-  -return_level_transformed
   
-  # Delta method: Calculate the gradient of the rl with respect to the parameters (for maxima data)
+  ##### Delta method: Calculate the gradient of the rl with respect to the parameters (for maxima data)
   gradient <- NULL
   for (l in 1:length(rp)) {
     location_grad <- 1
@@ -65,10 +65,10 @@ getReturnLevels_ct <- function(f, rp=c(25,50,100), conf=0.95){
     gradient <- rbind(gradient, c(location_grad, scale_grad, shape_grad)) 
   }
   
-  # Compute the standard error of the return level for the transformed data (maxima)
+  ##### Compute the standard error of the return level for the transformed data (maxima)
   v <- gradient%*%cov_matrix%*%t(gradient)
   
-  # Conf with rl
+  ##### Conf with rl
   rl[,2] <- rl[,3]-qnorm(1-(1-conf)/2)*sqrt(diag(v))
   rl[,4] <- rl[,3]+qnorm(1-(1-conf)/2)*sqrt(diag(v))
   rl[,5] <- sqrt(diag(v))
@@ -76,7 +76,7 @@ getReturnLevels_ct <- function(f, rp=c(25,50,100), conf=0.95){
   return(rl)
 }
 
-# Calculation function of the RL for RT-GEVD using the MLE method and the SE of RL using the delta method.
+#### Calculation function of the RL for RT-GEVD using the MLE method and the SE of RL using the delta method.
 getReturnLevels_rt <- function(f, rp=c(25,50,100), conf=0.95, sd_scale=NULL, trans=TRUE){
   # make empty list
   dn <- list(NULL,c('period','2.5% ','Estimate','97.5%','se'))
